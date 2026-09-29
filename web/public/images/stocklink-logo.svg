@@ -1,0 +1,36 @@
+<svg width="220" height="64" viewBox="0 0 220 64" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ff416c"/>
+        <stop offset="100%" stop-color="#e83e61"/>
+    </linearGradient>
+</defs>
+
+<rect x="3" y="5" width="54" height="54" rx="17" fill="url(#g)"/>
+
+<path
+    d="M18 21h23v7H25v4h14v7H25v4h16"
+    fill="none"
+    stroke="#fff"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+<circle cx="46" cy="17" r="5" fill="#fff"/>
+
+<text
+    x="70"
+    y="42"
+    font-family="Arial, sans-serif"
+    font-size="29"
+    font-weight="800"
+    fill="#172033">Stock</text>
+
+<text
+    x="151"
+    y="42"
+    font-family="Arial, sans-serif"
+    font-size="29"
+    font-weight="800"
+    fill="#e83e61">Link</text>
+</svg>

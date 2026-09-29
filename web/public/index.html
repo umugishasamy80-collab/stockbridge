@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StockLink - Business Marketplace</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <span>Stock</span>Link
+    </div>
+
+    <nav>
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('marketplace')">Marketplace</a>
+        <a href="#" onclick="showPage('categories')">Categories</a>
+        <a href="#" onclick="showPage('map')">Map</a>
+<a href="/admin" class="admin-link">
+    Admin
+</a>
+    </nav>
+
+    <div id="authButtons">
+        <button class="btn secondary" onclick="showPage('login')">
+            Login
+        </button>
+
+        <button class="btn primary" onclick="showPage('register')">
+            Register
+        </button>
+    </div>
+
+    <div id="userButtons" class="hidden">
+        <button class="btn secondary" onclick="showPage('dashboard')">
+            Dashboard
+        </button>
+
+        <button class="btn danger" onclick="logout()">
+            Logout
+        </button>
+    </div>
+
+</header>
+
+
+<main>
+
+<section id="home" class="page">
+
+    <div class="hero">
+
+        <div class="hero-text">
+
+            <div class="badge">
+                B2B INVENTORY NETWORK
+            </div>
+
+            <h1>
+                Turn excess stock into
+                <span>business opportunities.</span>
+            </h1>
+
+            <p>
+                StockLink connects businesses that have excess inventory
+                with businesses looking for products.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button
+                    class="btn primary large"
+                    onclick="showPage('marketplace')">
+                    Explore Marketplace
+                </button>
+
+                <button
+                    class="btn secondary large"
+                    onclick="showPage('register')">
+                    Join StockLink
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="hero-card">
+
+            <div class="stock-card">
+
+                <div class="stock-top">
+                    <span>Available Stock</span>
+                    <span class="available">● Available</span>
+                </div>
+
+                <h3>Premium Rice</h3>
+
+                <p>200 bags available</p>
+
+                <div class="stock-info">
+                    <strong>45,000 RWF</strong>
+                    <span>per bag</span>
+                </div>
+
+                <div class="seller">
+                    <div class="avatar">AB</div>
+
+                    <div>
+                        <strong>ABC Wholesale</strong>
+                        <small>Kigali, Rwanda</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="features">
+
+        <div class="feature">
+            <div class="feature-icon">📦</div>
+            <h3>Share Excess Stock</h3>
+            <p>
+                List products your business has available.
+            </p>
+        </div>
+
+        <div class="feature">
+            <div class="feature-icon">🔎</div>
+            <h3>Find Products</h3>
+            <p>
+                Search inventory from businesses around you.
+            </p>
+        </div>
+
+        <div class="feature">
+            <div class="feature-icon">📍</div>
+            <h3>Find Nearby</h3>
+            <p>
+                Discover businesses and stock using the map.
+            </p>
+        </div>
+
+        <div class="feature">
+            <div class="feature-icon">🤝</div>
+            <h3>Connect</h3>
+            <p>
+                Contact sellers directly and make deals.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="register" class="page hidden">
+
+    <div class="form-container">
+
+        <h2>Create your StockLink account</h2>
+
+        <p class="form-subtitle">
+            Register your business and start sharing inventory.
+        </p>
+
+        <form id="registerForm">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Your name</label>
+                    <input id="regName" required>
+                </div>
+
+                <div>
+                    <label>Business name</label>
+                    <input id="businessName" required>
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input id="regEmail" type="email" required>
+                </div>
+
+                <div>
+                    <label>Password</label>
+                    <input id="regPassword" type="password" required>
+                </div>
+
+                <div>
+                    <label>Phone</label>
+                    <input id="phone" placeholder="+250...">
+                </div>
+
+                <div>
+                    <label>WhatsApp</label>
+                    <input id="whatsapp" placeholder="+250...">
+                </div>
+
+                <div>
+                    <label>Business type</label>
+
+                    <select id="businessType">
+
+                        <option value="">
+                            Select business type
+                        </option>
+
+                        <option>Wholesale</option>
+                        <option>Retail</option>
+                        <option>Manufacturer</option>
+                        <option>Distributor</option>
+                        <option>Farmer</option>
+                        <option>Restaurant</option>
+                        <option>Other</option>
+
+                    </select>
+
+                </div>
+
+                <div>
+                    <label>City</label>
+                    <input id="city" placeholder="Kigali">
+                </div>
+
+                <div class="full">
+                    <label>Business address</label>
+                    <input id="address">
+                </div>
+
+                <div class="full">
+                    <label>Business description</label>
+                    <textarea id="description"></textarea>
+                </div>
+
+            </div>
+
+            <h3 class="section-title">
+                Business location
+            </h3>
+
+            <p>
+                Click on the map to select your business location.
+            </p>
+
+            <div id="registerMap"></div>
+
+            <input type="hidden" id="latitude">
+            <input type="hidden" id="longitude">
+
+            <button class="btn primary full-btn">
+                Create Account
+            </button>
+
+        </form>
+
+        <p id="registerMessage" class="message"></p>
+
+        <p class="switch">
+            Already have an account?
+            <a onclick="showPage('login')">Login</a>
+        </p>
+
+    </div>
+
+</section>
+
+
+<section id="login" class="page hidden">
+
+    <div class="form-container small">
+
+        <h2>Welcome back</h2>
+
+        <p class="form-subtitle">
+            Login to manage your StockLink business.
+        </p>
+
+        <form id="loginForm">
+
+            <label>Email</label>
+            <input id="loginEmail" type="email" required>
+
+            <label>Password</label>
+            <input id="loginPassword" type="password" required>
+
+            <button class="btn primary full-btn">
+                Login
+            </button>
+
+        </form>
+
+        <p id="loginMessage" class="message"></p>
+
+        <p class="switch">
+            Don't have an account?
+            <a onclick="showPage('register')">Register</a>
+        </p>
+
+    </div>
+
+</section>
+
+
+<section id="dashboard" class="page hidden">
+
+    <div class="dashboard">
+
+        <div class="dashboard-header">
+
+            <div>
+                <p class="eyebrow">BUSINESS DASHBOARD</p>
+                <h2 id="welcomeName">Welcome back</h2>
+                <p id="businessDisplay"></p>
+            </div>
+
+            <button
+                class="btn primary"
+                onclick="showPage('addProduct')">
+                + Add Product
+            </button>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                <span>My Products</span>
+                <strong id="productCount">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Available Stock</span>
+                <strong id="stockCount">0</strong>
+            </div>
+
+            <div class="stat">
+                <span>Categories</span>
+                <strong id="categoryCount">0</strong>
+            </div>
+
+        </div>
+
+        <div class="dashboard-grid">
+
+            <div class="panel">
+
+                <h3>My Products</h3>
+
+                <div id="myProducts">
+                    Loading...
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <h3>Business Contact</h3>
+
+                <div id="businessInfo"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="addProduct" class="page hidden">
+
+    <div class="form-container">
+
+        <h2>Add Product</h2>
+
+        <p class="form-subtitle">
+            List your available stock for other businesses.
+        </p>
+
+        <form id="productForm">
+
+            <div class="form-grid">
+
+                <div class="full">
+                    <label>Product name</label>
+                    <input id="productName" required>
+                </div>
+
+                <div>
+                    <label>Category</label>
+
+                    <select id="productCategory" required>
+                        <option value="">
+                            Loading categories...
+                        </option>
+                    </select>
+
+                </div>
+
+                <div>
+                    <label>Quantity</label>
+                    <input
+                        id="productQuantity"
+                        type="number"
+                        min="0"
+                        required>
+                </div>
+
+                <div>
+                    <label>Unit</label>
+
+                    <select id="productUnit">
+
+                        <option>Pieces</option>
+                        <option>Kg</option>
+                        <option>Tonnes</option>
+                        <option>Bags</option>
+                        <option>Boxes</option>
+                        <option>Litres</option>
+                        <option>Cartons</option>
+                        <option>Pairs</option>
+                        <option>Dozens</option>
+
+                    </select>
+
+                </div>
+
+               <div>
+    <label>Price</label>
+
+    <input
+        id="productPrice"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Product price">
+</div>
+
+<div>
+    <label>Currency</label>
+
+    <select id="productCurrency">
+        <script>
+            document.write(currencyOptions());
+        </script>
+    </select>
+</div>
+
+                <div>
+                    <label>Minimum order</label>
+                    <input
+                        id="minimumOrder"
+                        type="number"
+                        min="1"
+                        value="1">
+                </div>
+
+                <div>
+                    <label>Condition</label>
+
+                    <select id="productCondition">
+
+                        <option>New</option>
+                        <option>Used</option>
+                        <option>Refurbished</option>
+
+                    </select>
+
+                </div>
+
+                <div class="full">
+
+                    <label>Description</label>
+
+                    <textarea
+                        id="productDescription"
+                        placeholder="Describe your product...">
+                    </textarea>
+
+                </div>
+
+                <div class="full">
+
+                    <label>Product image</label>
+
+                    <input
+                        id="productImage"
+                        type="file"
+                        accept="image/*">
+
+                </div>
+
+            </div>
+
+            <button class="btn primary full-btn">
+                Add Product
+            </button>
+
+        </form>
+
+        <p id="productMessage" class="message"></p>
+
+    </div>
+
+</section>
+
+
+<section id="marketplace" class="page hidden">
+
+    <div class="marketplace">
+
+        <div class="marketplace-header">
+
+            <div>
+                <p class="eyebrow">STOCK MARKETPLACE</p>
+                <h2>Find available products</h2>
+            </div>
+
+            <button
+                class="btn primary"
+                onclick="showPage('addProduct')">
+                + Sell Stock
+            </button>
+
+        </div>
+
+        <div class="search-box">
+
+            <input
+                id="searchProduct"
+                placeholder="Search products...">
+
+            <select id="searchCategory">
+                <option value="">All categories</option>
+            </select>
+
+            <input
+                id="searchCity"
+                placeholder="City">
+
+            <button
+                class="btn primary"
+                onclick="loadProducts()">
+                Search
+            </button>
+
+        </div>
+
+        <div id="productsGrid" class="products-grid">
+            Loading products...
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="categories" class="page hidden">
+
+    <div class="categories-page">
+
+        <p class="eyebrow">PRODUCT CATEGORIES</p>
+
+        <h2>Explore categories</h2>
+
+        <div
+            id="categoriesGrid"
+            class="categories-grid">
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="map" class="page hidden">
+
+    <div class="map-page">
+
+        <p class="eyebrow">BUSINESS LOCATIONS</p>
+
+        <h2>Find businesses near you</h2>
+
+        <div id="mainMap"></div>
+
+    </div>
+
+</section>
+<!-- STOCKLINK PUBLIC MARKETPLACE -->
+
+<section
+    id="stocklinkPublicMarketplace"
+    class="stocklink-public-section">
+
+    <div class="stocklink-section-container">
+
+        <div class="stocklink-section-heading">
+
+            <div>
+
+                <span class="stocklink-eyebrow">
+                    STOCKLINK MARKETPLACE
+                </span>
+
+                <h2>
+                    Discover businesses and available stock
+                </h2>
+
+                <p>
+                    Browse products and companies publicly.
+                    Create an account only when you are ready
+                    to contact a seller or request an order.
+                </p>
+
+            </div>
+
+            <button
+                class="stocklink-outline-button"
+                onclick="showPage('marketplace')">
+
+                View marketplace →
+            </button>
+
+        </div>
+
+        <div
+            id="stocklinkCategories"
+            class="stocklink-categories-grid">
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="stocklink-public-section stocklink-products-section">
+
+    <div class="stocklink-section-container">
+
+        <div class="stocklink-section-heading">
+
+            <div>
+
+                <span class="stocklink-eyebrow">
+                    AVAILABLE STOCK
+                </span>
+
+                <h2>
+    Products near you
+</h2>
+
+<p>
+    StockLink shows nearby available stock first,
+    helping businesses find suppliers closer to them.
+</p>
+
+            </div>
+
+            <button
+                class="stocklink-outline-button"
+                onclick="showPage('marketplace')">
+
+                Explore all
+            </button>
+
+        </div>
+
+        <div
+            id="stocklinkPublicProducts"
+            class="stocklink-products-grid">
+
+            <div class="stocklink-loading">
+                Loading products...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="stocklink-public-section">
+
+    <div class="stocklink-section-container">
+
+        <div class="stocklink-section-heading">
+
+            <div>
+
+                <span class="stocklink-eyebrow">
+                    BUSINESS NETWORK
+                </span>
+
+                <h2>
+                    Companies on StockLink
+                </h2>
+
+                <p>
+                    Discover businesses, their products,
+                    locations and contact information.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div
+            id="stocklinkPublicCompanies"
+            class="stocklink-companies-grid">
+
+            <div class="stocklink-company-card">
+
+                <div class="stocklink-company-avatar">
+                    🏢
+                </div>
+
+                <div>
+
+                    <h3>
+                        Businesses coming soon
+                    </h3>
+
+                    <p>
+                        Registered businesses will appear
+                        here with their products.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script src="/js/app.js"></script>
+
+</body>
+</html>

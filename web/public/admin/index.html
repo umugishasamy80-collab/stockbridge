@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StockLink Admin</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f8fa;
+            color: #202735;
+            font-family: Arial, sans-serif;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: #ffffff;
+            border-right: 1px solid #e5e8ed;
+            padding: 25px 18px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .admin-logo {
+            font-size: 25px;
+            font-weight: 800;
+            color: #c95b72;
+            margin-bottom: 35px;
+            padding-left: 10px;
+        }
+
+        .admin-nav button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            text-align: left;
+            padding: 13px 14px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: #596372;
+            font-size: 15px;
+        }
+
+        .admin-nav button:hover,
+        .admin-nav button.active {
+            background: #f8e9ed;
+            color: #a7485f;
+        }
+
+        .admin-main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .admin-topbar {
+            background: white;
+            border: 1px solid #e5e8ed;
+            border-radius: 15px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .admin-topbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .admin-back {
+            border: 1px solid #e1e4e9;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .admin-card {
+            background: white;
+            border: 1px solid #e5e8ed;
+            border-radius: 15px;
+            padding: 22px;
+        }
+
+        .admin-card span {
+            color: #727b89;
+            font-size: 14px;
+        }
+
+        .admin-card strong {
+            display: block;
+            font-size: 30px;
+            margin-top: 8px;
+        }
+
+        .admin-section {
+            display: none;
+            background: white;
+            border: 1px solid #e5e8ed;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .admin-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-section-header h2 {
+            margin: 0;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 13px 10px;
+            border-bottom: 1px solid #edf0f3;
+        }
+
+        .admin-table th {
+            color: #687385;
+            font-size: 13px;
+        }
+
+        .admin-action {
+            border: 0;
+            padding: 8px 11px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f8e9ed;
+            color: #a7485f;
+        }
+
+        .admin-danger {
+            background: #f9eeee;
+            color: #a84c4c;
+        }
+
+        .admin-primary {
+            border: 0;
+            background: #c95b72;
+            color: white;
+            padding: 11px 16px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .admin-search {
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid #dfe3e9;
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+        }
+
+        .admin-empty {
+            padding: 40px;
+            text-align: center;
+            color: #78818e;
+        }
+
+        .admin-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 25, 35, .45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10000;
+        }
+
+        .admin-modal.show {
+            display: flex;
+        }
+
+        .admin-form {
+            width: min(700px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+        }
+
+        .admin-form h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            border: 1px solid #dfe3e9;
+            border-radius: 9px;
+            padding: 12px;
+            font: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 90px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        @media(max-width: 900px) {
+
+            .admin-sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .admin-logo {
+                font-size: 0;
+            }
+
+            .admin-logo::after {
+                content: "S";
+                font-size: 24px;
+            }
+
+            .admin-nav button {
+                font-size: 0;
+                text-align: center;
+            }
+
+            .admin-nav button::first-letter {
+                font-size: 18px;
+            }
+
+            .admin-main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+
+            .admin-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            StockLink
+        </div>
+
+        <nav class="admin-nav">
+
+            <button
+                class="active"
+                onclick="adminShow('overview', this)">
+                🏠 Overview
+            </button>
+
+            <button
+                onclick="adminShow('products', this)">
+                📦 Products
+            </button>
+
+            <button
+                onclick="adminShow('categories', this)">
+                🗂 Categories
+            </button>
+
+            <button
+                onclick="adminShow('companies', this)">
+                🏢 Companies
+            </button>
+
+            <button
+                onclick="adminShow('orders', this)">
+                🛒 Orders
+            </button>
+
+            <button
+                onclick="adminShow('users', this)">
+                👥 Users
+            </button>
+
+            <button
+                onclick="adminShow('locations', this)">
+                📍 Locations
+            </button>
+
+        </nav>
+
+    </aside>
+
+    <main class="admin-main">
+
+        <div class="admin-topbar">
+
+            <h1 id="adminTitle">
+                Dashboard
+            </h1>
+
+            <button
+                class="admin-back"
+                onclick="location.href='/'">
+
+                ← Back to StockLink
+
+            </button>
+
+        </div>
+
+
+        <!-- OVERVIEW -->
+
+        <section
+            id="overview"
+            class="admin-section active">
+
+            <div class="admin-cards">
+
+                <div class="admin-card">
+                    <span>Products</span>
+                    <strong id="statProducts">0</strong>
+                </div>
+
+                <div class="admin-card">
+                    <span>Orders</span>
+                    <strong id="statOrders">0</strong>
+                </div>
+
+                <div class="admin-card">
+                    <span>Users</span>
+                    <strong id="statUsers">—</strong>
+                </div>
+
+                <div class="admin-card">
+                    <span>Categories</span>
+                    <strong id="statCategories">—</strong>
+                </div>
+
+            </div>
+
+            <div class="admin-card">
+
+                <h2>
+                    StockLink Administration
+                </h2>
+
+                <p>
+                    Manage marketplace products,
+                    orders, companies, users and
+                    business locations from here.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCTS -->
+
+        <section
+            id="products"
+            class="admin-section">
+
+            <div class="admin-section-header">
+
+                <h2>Products</h2>
+
+                <button
+                    class="admin-primary"
+                    onclick="adminNewProduct()">
+
+                    + Add Product
+
+                </button>
+
+            </div>
+
+            <input
+                class="admin-search"
+                placeholder="Search products..."
+                oninput="adminSearchProducts(this.value)">
+
+            <div id="productsContainer">
+                Loading...
+            </div>
+
+        </section>
+
+
+        <!-- CATEGORIES -->
+
+        <section
+            id="categories"
+            class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>Categories</h2>
+            </div>
+
+            <div id="categoriesContainer">
+                Loading...
+            </div>
+
+        </section>
+
+
+        <!-- COMPANIES -->
+
+        <section
+            id="companies"
+            class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>Companies</h2>
+            </div>
+
+            <div class="admin-empty">
+                Business management will appear here.
+            </div>
+
+        </section>
+
+
+        <!-- ORDERS -->
+
+        <section
+            id="orders"
+            class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>Orders</h2>
+            </div>
+
+            <div id="ordersContainer">
+                Loading...
+            </div>
+
+        </section>
+
+
+        <!-- USERS -->
+
+        <section
+            id="users"
+            class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>Users</h2>
+            </div>
+
+            <div class="admin-empty">
+                User management will appear here.
+            </div>
+
+        </section>
+
+
+        <!-- LOCATIONS -->
+
+        <section
+            id="locations"
+            class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>Business Locations</h2>
+            </div>
+
+            <p>
+                Product addresses and coordinates can
+                be managed from the product editor.
+            </p>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- PRODUCT EDITOR -->
+
+<div
+    id="productModal"
+    class="admin-modal">
+
+    <div class="admin-form">
+
+        <h2 id="productModalTitle">
+            Edit Product
+        </h2>
+
+        <input
+            type="hidden"
+            id="editProductId">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Product name</label>
+
+                <input
+                    id="editName">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Category ID</label>
+
+                <input
+                    id="editCategory">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Price</label>
+
+                <input
+                    id="editPrice"
+                    type="number">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Currency</label>
+
+                <select id="editCurrency">
+
+                    <option value="RWF">
+                        RWF
+                    </option>
+
+                    <option value="USD">
+                        USD
+                    </option>
+
+                    <option value="EUR">
+                        EUR
+                    </option>
+
+                    <option value="GBP">
+                        GBP
+                    </option>
+
+                    <option value="KES">
+                        KES
+                    </option>
+
+                    <option value="TZS">
+                        TZS
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Quantity</label>
+
+                <input
+                    id="editQuantity"
+                    type="number">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Image URL</label>
+
+                <input
+                    id="editImage">
+
+            </div>
+
+            <div class="form-group full">
+
+                <label>Description</label>
+
+                <textarea
+                    id="editDescription">
+                </textarea>
+
+            </div>
+
+            <div class="form-group full">
+
+                <label>Business address</label>
+
+                <input
+                    id="editAddress">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>City</label>
+
+                <input
+                    id="editCity">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Latitude</label>
+
+                <input
+                    id="editLatitude">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Longitude</label>
+
+                <input
+                    id="editLongitude">
+
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button
+                class="admin-back"
+                onclick="adminCloseModal()">
+
+                Cancel
+
+            </button>
+
+            <button
+                class="admin-primary"
+                onclick="adminSaveProduct()">
+
+                Save Changes
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let adminProducts = [];
+
+
+function adminShow(section, button) {
+
+    document
+        .querySelectorAll(".admin-section")
+        .forEach(el => {
+            el.classList.remove("active");
+        });
+
+    document
+        .getElementById(section)
+        .classList.add("active");
+
+    document
+        .querySelectorAll(".admin-nav button")
+        .forEach(el => {
+            el.classList.remove("active");
+        });
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    const titles = {
+        overview: "Dashboard",
+        products: "Products",
+        categories: "Categories",
+        companies: "Companies",
+        orders: "Orders",
+        users: "Users",
+        locations: "Business Locations"
+    };
+
+    document.getElementById(
+        "adminTitle"
+    ).textContent = titles[section];
+
+    if (section === "products") {
+        adminLoadProducts();
+    }
+
+    if (section === "orders") {
+        adminLoadOrders();
+    }
+
+}
+
+
+async function adminLoadProducts() {
+
+    const container =
+        document.getElementById(
+            "productsContainer"
+        );
+
+    container.innerHTML = "Loading...";
+
+    try {
+
+        const response =
+            await fetch("/api/admin/products");
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            container.innerHTML =
+                `<div class="admin-empty">
+                    ${data.error || "Access denied"}
+                </div>`;
+
+            return;
+        }
+
+        adminProducts = data;
+
+        document.getElementById(
+            "statProducts"
+        ).textContent = data.length;
+
+        adminRenderProducts(data);
+
+    } catch (error) {
+
+        container.innerHTML =
+            `<div class="admin-empty">
+                Could not connect to server.
+            </div>`;
+
+    }
+
+}
+
+
+function adminRenderProducts(products) {
+
+    const container =
+        document.getElementById(
+            "productsContainer"
+        );
+
+    if (!products.length) {
+
+        container.innerHTML =
+            `<div class="admin-empty">
+                No products found.
+            </div>`;
+
+        return;
+    }
+
+    container.innerHTML = `
+
+        <div style="overflow-x:auto">
+
+            <table class="admin-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${products.map(product => `
+
+                        <tr>
+
+                            <td>
+                                ${product.id}
+                            </td>
+
+                            <td>
+                                ${product.name || ""}
+                            </td>
+
+                            <td>
+                                ${product.category || ""}
+                            </td>
+
+                            <td>
+                                ${product.price || 0}
+                                ${product.currency || "RWF"}
+                            </td>
+
+                            <td>
+                                ${product.quantity || 0}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="admin-action"
+                                    onclick="
+                                        adminEditProduct(
+                                            ${product.id}
+                                        )
+                                    ">
+
+                                    Edit
+
+                                </button>
+
+                                <button
+                                    class="admin-action admin-danger"
+                                    onclick="
+                                        adminDeleteProduct(
+                                            ${product.id}
+                                        )
+                                    ">
+
+                                    Delete
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `).join("")}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+
+}
+
+
+function adminSearchProducts(value) {
+
+    const search =
+        value.toLowerCase();
+
+    const filtered =
+        adminProducts.filter(product =>
+            String(product.name || "")
+                .toLowerCase()
+                .includes(search)
+        );
+
+    adminRenderProducts(filtered);
+
+}
+
+
+function adminEditProduct(id) {
+
+    const product =
+        adminProducts.find(
+            p => p.id === id
+        );
+
+    if (!product) return;
+
+    document.getElementById(
+        "productModalTitle"
+    ).textContent =
+        "Edit Product";
+
+    document.getElementById(
+        "editProductId"
+    ).value = product.id;
+
+    document.getElementById(
+        "editName"
+    ).value = product.name || "";
+
+    document.getElementById(
+        "editCategory"
+    ).value = product.category_id || "";
+
+    document.getElementById(
+        "editPrice"
+    ).value = product.price || "";
+
+    document.getElementById(
+        "editCurrency"
+    ).value =
+        product.currency || "RWF";
+
+    document.getElementById(
+        "editQuantity"
+    ).value = product.quantity || "";
+
+    document.getElementById(
+        "editImage"
+    ).value = product.image || "";
+
+    document.getElementById(
+        "editDescription"
+    ).value =
+        product.description || "";
+
+    document.getElementById(
+        "editAddress"
+    ).value =
+        product.address || "";
+
+    document.getElementById(
+        "editCity"
+    ).value =
+        product.city || "";
+
+    document.getElementById(
+        "editLatitude"
+    ).value =
+        product.latitude || "";
+
+    document.getElementById(
+        "editLongitude"
+    ).value =
+        product.longitude || "";
+
+    document.getElementById(
+        "productModal"
+    ).classList.add("show");
+
+}
+
+
+function adminNewProduct() {
+
+    document.getElementById(
+        "productModalTitle"
+    ).textContent =
+        "Add Product";
+
+    document.getElementById(
+        "editProductId"
+    ).value = "";
+
+    document.getElementById(
+        "editName"
+    ).value = "";
+
+    document.getElementById(
+        "editCategory"
+    ).value = "";
+
+    document.getElementById(
+        "editPrice"
+    ).value = "";
+
+    document.getElementById(
+        "editCurrency"
+    ).value = "RWF";
+
+    document.getElementById(
+        "editQuantity"
+    ).value = "";
+
+    document.getElementById(
+        "editImage"
+    ).value = "";
+
+    document.getElementById(
+        "editDescription"
+    ).value = "";
+
+    document.getElementById(
+        "editAddress"
+    ).value = "";
+
+    document.getElementById(
+        "editCity"
+    ).value = "";
+
+    document.getElementById(
+        "editLatitude"
+    ).value = "";
+
+    document.getElementById(
+        "editLongitude"
+    ).value = "";
+
+    document.getElementById(
+        "productModal"
+    ).classList.add("show");
+
+}
+
+
+function adminCloseModal() {
+
+    document.getElementById(
+        "productModal"
+    ).classList.remove("show");
+
+}
+
+
+async function adminSaveProduct() {
+
+    const id =
+        document.getElementById(
+            "editProductId"
+        ).value;
+
+    if (!id) {
+
+        alert(
+            "Adding new products will be connected to the product creation API next."
+        );
+
+        return;
+
+    }
+
+    const body = {
+
+        name:
+            document.getElementById(
+                "editName"
+            ).value,
+
+        category_id:
+            Number(
+                document.getElementById(
+                    "editCategory"
+                ).value
+            ),
+
+        price:
+            Number(
+                document.getElementById(
+                    "editPrice"
+                ).value
+            ),
+
+        currency:
+            document.getElementById(
+                "editCurrency"
+            ).value,
+
+        quantity:
+            Number(
+                document.getElementById(
+                    "editQuantity"
+                ).value
+            ),
+
+        image:
+            document.getElementById(
+                "editImage"
+            ).value,
+
+        description:
+            document.getElementById(
+                "editDescription"
+            ).value,
+
+        address:
+            document.getElementById(
+                "editAddress"
+            ).value,
+
+        city:
+            document.getElementById(
+                "editCity"
+            ).value,
+
+        latitude:
+            document.getElementById(
+                "editLatitude"
+            ).value,
+
+        longitude:
+            document.getElementById(
+                "editLongitude"
+            ).value
+
+    };
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/products/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(body)
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Could not update product"
+            );
+
+            return;
+        }
+
+        alert(
+            "Product updated successfully."
+        );
+
+        adminCloseModal();
+
+        adminLoadProducts();
+
+    } catch (error) {
+
+        alert(
+            "Could not connect to server."
+        );
+
+    }
+
+}
+
+
+async function adminDeleteProduct(id) {
+
+    if (
+        !confirm(
+            "Delete this product?"
+        )
+    ) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/products/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Could not delete product"
+            );
+
+            return;
+        }
+
+        adminLoadProducts();
+
+    } catch (error) {
+
+        alert(
+            "Could not connect to server."
+        );
+
+    }
+
+}
+
+
+async function adminLoadOrders() {
+
+    const container =
+        document.getElementById(
+            "ordersContainer"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/orders"
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            container.innerHTML =
+                `<div class="admin-empty">
+                    ${data.error || "Access denied"}
+                </div>`;
+
+            return;
+        }
+
+        document.getElementById(
+            "statOrders"
+        ).textContent =
+            data.length;
+
+        if (!data.length) {
+
+            container.innerHTML =
+                `<div class="admin-empty">
+                    No orders yet.
+                </div>`;
+
+            return;
+        }
+
+        container.innerHTML = `
+
+            <div style="overflow-x:auto">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${data.map(order => `
+
+                            <tr>
+
+                                <td>
+                                    ${order.id}
+                                </td>
+
+                                <td>
+                                    ${order.product_name || ""}
+                                </td>
+
+                                <td>
+                                    ${order.quantity}
+                                </td>
+
+                                <td>
+                                    ${order.delivery_address || ""}
+                                </td>
+
+                                <td>
+                                    ${order.status}
+                                </td>
+
+                                <td>
+
+                                    <select
+                                        onchange="
+                                            adminUpdateOrder(
+                                                ${order.id},
+                                                this.value
+                                            )">
+
+                                        <option
+                                            value="pending"
+                                            ${order.status === "pending" ? "selected" : ""}>
+                                            Pending
+                                        </option>
+
+                                        <option
+                                            value="confirmed"
+                                            ${order.status === "confirmed" ? "selected" : ""}>
+                                            Confirmed
+                                        </option>
+
+                                        <option
+                                            value="processing"
+                                            ${order.status === "processing" ? "selected" : ""}>
+                                            Processing
+                                        </option>
+
+                                        <option
+                                            value="completed"
+                                            ${order.status === "completed" ? "selected" : ""}>
+                                            Completed
+                                        </option>
+
+                                        <option
+                                            value="cancelled"
+                                            ${order.status === "cancelled" ? "selected" : ""}>
+                                            Cancelled
+                                        </option>
+
+                                    </select>
+
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+    } catch (error) {
+
+        container.innerHTML =
+            `<div class="admin-empty">
+                Could not connect to server.
+            </div>`;
+
+    }
+
+}
+
+
+async function adminUpdateOrder(
+    id,
+    status
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/orders/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            status
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Could not update order"
+            );
+
+        }
+
+    } catch (error) {
+
+        alert(
+            "Could not connect to server."
+        );
+
+    }
+
+}
+
+
+adminLoadProducts();
+
+</script>
+
+</body>
+</html>
